@@ -1,0 +1,1200 @@
+<!DOCTYPE HTML>
+<html lang="en" class="sidebar-visible no-js light">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>The Rust Language Design Team</title>
+        
+        <meta name="robots" content="noindex" />
+        
+        
+
+
+        <!-- Custom HTML head -->
+        
+
+
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff" />
+
+        
+        <link rel="icon" href="favicon.svg">
+        
+        
+        <link rel="shortcut icon" href="favicon.png">
+        
+        <link rel="stylesheet" href="css/variables.css">
+        <link rel="stylesheet" href="css/general.css">
+        <link rel="stylesheet" href="css/chrome.css">
+        
+        <link rel="stylesheet" href="css/print.css" media="print">
+        
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="FontAwesome/css/font-awesome.css">
+        
+        <link rel="stylesheet" href="fonts/fonts.css">
+        
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="highlight.css">
+        <link rel="stylesheet" href="tomorrow-night.css">
+        <link rel="stylesheet" href="ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+        
+
+        
+    </head>
+    <body>
+        <!-- Provide site root to javascript -->
+        <script type="text/javascript">
+            var path_to_root = "";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+        </script>
+
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script type="text/javascript">
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script type="text/javascript">
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            var html = document.querySelector('html');
+            html.classList.remove('no-js')
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add('js');
+        </script>
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script type="text/javascript">
+            var html = document.querySelector('html');
+            var sidebar = 'hidden';
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            }
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <div class="sidebar-scrollbox">
+                <ol class="chapter"><li class="chapter-item expanded "><a href="welcome.html"><strong aria-hidden="true">1.</strong> Welcome</a></li><li class="chapter-item expanded "><a href="chat_platform.html"><strong aria-hidden="true">2.</strong> Chat platform</a></li><li class="chapter-item expanded "><a href="calendar.html"><strong aria-hidden="true">3.</strong> Calendar</a></li><li class="chapter-item expanded "><a href="meetings.html"><strong aria-hidden="true">4.</strong> Meetings</a></li><li class="chapter-item expanded "><a href="priorities.html"><strong aria-hidden="true">5.</strong> Current priorities</a></li><li class="chapter-item expanded "><a href="project_groups.html"><strong aria-hidden="true">6.</strong> Active project groups</a></li><li class="chapter-item expanded "><a href="proposing_a_project.html"><strong aria-hidden="true">7.</strong> Proposing a new project</a></li><li class="chapter-item expanded "><a href="design_notes.html"><strong aria-hidden="true">8.</strong> Design notes</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="design_notes/int_literal_as_float.html"><strong aria-hidden="true">8.1.</strong> Allowing integer literals like 1 to be inferred to floating point</a></li><li class="chapter-item expanded "><a href="design_notes/general_coroutines.html"><strong aria-hidden="true">8.2.</strong> Generalizing coroutines</a></li></ol></li></ol>
+            </div>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky bordered">
+                    <div class="left-buttons">
+                        <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </button>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light (default)</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                        
+                    </div>
+
+                    <h1 class="menu-title">The Rust Language Design Team</h1>
+
+                    <div class="right-buttons">
+                        
+                        <a href="print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+                        
+                        
+                    </div>
+                </div>
+
+                
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" name="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+                
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script type="text/javascript">
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="welcome"><a class="header" href="#welcome">Welcome</a></h1>
+<p>Welcome to the repository for the Rust Language Design Team.  This
+page stores our administrative information, meeting minutes, as well
+as some amount of design constraints. It's also still a
+work-in-progress (insert omnipresent mid 90s logo for under
+construction here).</p>
+<h1 id="chat-platform"><a class="header" href="#chat-platform">Chat platform</a></h1>
+<p>The lang team hangs out in the <a href="https://forge.rust-lang.org/chat/zulip.html">rust-lang Zulip</a> in the <code>#t-lang</code>
+stream. There are also other <code>#t-lang/*</code> streams that might be of
+interest.</p>
+<h1 id="calendar"><a class="header" href="#calendar">Calendar</a></h1>
+<p>We have a lang-team calendar that shows the time for our various meetings.
+Meetings are generally open to anyone who wants to listen in. We also try to
+post <a href="./minutes.html">minutes and recordings</a> on a &quot;best-effort&quot; basis from our
+meetings.</p>
+<ul>
+<li><a href="https://calendar.google.com/calendar/embed?src=recud4b9o8cmc0m5rmr033p5nk%40group.calendar.google.com&amp;ctz=America%2FNew_York">View calendar</a> -- use this to view the calendar online and add it to your Google Calendar</li>
+<li><a href="https://calendar.google.com/calendar/ical/recud4b9o8cmc0m5rmr033p5nk%40group.calendar.google.com/public/basic.ics">ICS file, for use outside from google calendar</a> -- you can use this to subscribe from other programs</li>
+</ul>
+<h1 id="meetings"><a class="header" href="#meetings">Meetings</a></h1>
+<p>The lang team has two standing meetings. The current timing for these
+can be found on the <a href="./calendar.html">lang team calendar</a>. We
+generally record our public meetings and post the recordings in our
+<a href="https://www.youtube.com/playlist?list=PL85XCvVPmGQg-gYy7R6a_Y91oQLdsbSpa">YouTube playlist</a> (along with automatically created subtitles). We
+also publish notes and minutes in written form in this github
+repository.</p>
+<h2 id="triage-meeting"><a class="header" href="#triage-meeting">Triage meeting</a></h2>
+<p>The weekly triage meeting is when we go over the newly filed project
+proposals along with issues that have been nominated for lang-team
+feedback. We also get regular updates from the active project groups
+so we can stay on top of what is going on.</p>
+<p><a href="https://github.com/rust-lang/lang-team/tree/master/minutes">Triage meeting minutes are available in this directory.</a></p>
+<h3 id="nominating-an-issue-pr-rfc-etc-for-the-triage-meeting"><a class="header" href="#nominating-an-issue-pr-rfc-etc-for-the-triage-meeting">Nominating an issue, PR, RFC etc for the triage meeting</a></h3>
+<p>You can nominate an issue/PR/RFC etc for the triage meeting by adding
+the <code>T-lang</code> and <code>I-nominated</code> labels. When you do so, it's best if
+you leave a comment explaining what kind of feedback you would
+like. We try to go over all nominated issues and leave a comment
+of some kind in response.</p>
+<h2 id="design-meeting"><a class="header" href="#design-meeting">Design meeting</a></h2>
+<p>The second weekly meeting is our <strong>design meeting</strong>. The design
+meeting topics are used for in-depth discussions on a particular
+topic, often in connection with an active working group.</p>
+<h3 id="proposing-a-topic-for-a-design-meeting"><a class="header" href="#proposing-a-topic-for-a-design-meeting">Proposing a topic for a design meeting</a></h3>
+<p>You can propose a topic for a design meeting by opening an <a href="https://github.com/rust-lang/lang-team/issues/new/choose">Design
+meeting proposal</a> issue on the lang-team repository. During our weekly
+triage meetings, we scan open issues to try and decide whether to
+schedule meetings in the upcoming weeks.</p>
+<p><a href="https://github.com/rust-lang/lang-team/tree/master/design-meeting-minutes">Design meeting minutes are available in this directory.</a></p>
+<h1 id="priorities"><a class="header" href="#priorities">Priorities</a></h1>
+<p>This page describes the current lang team priorities and explains
+their motivations. This page is typically updated as part of the
+yearly Rust roadmap process. They are derived from a combination of
+the Rust survey results, feedback from users, and other soruces. When
+new project proposals are created, they can cite priorities listed in
+this page.</p>
+<p>Each priority also lists lang-team members who typically prefer to
+liaison for issues in this area. This can give you an idea of who you
+might reach out to if you wish to discuss a project proposal.</p>
+<p><strong>Last updated:</strong> 2020-07-28</p>
+<ul>
+<li>Async I/O
+<ul>
+<li><strong>What?</strong> Continued improvements with ergonomics and productivity related to Async I/O.</li>
+<li><strong>Why?</strong> Shows up heavily on the survey, this is an obvious area where a lot of Rust developers are working.</li>
+<li><strong>Who:</strong> <a href="https://github.com/nikomatsakis">nikomatsakis</a>, <a href="https://github.com/withoutboats">withoutboats</a>, <a href="https://github.com/cramertj">cramertj</a></li>
+</ul>
+</li>
+<li>C Parity, interop, and embedded -- these often overlap in 'low level capabilities'
+<ul>
+<li><strong>What</strong>? Extending Rust's low-level capabilities to do &quot;things otherwise only possible in C or assembly&quot;, as well as enabling smooth, ergonomic FFI between other languages and Rust.</li>
+<li><strong>Why?</strong> Embedded is a large factor in the survey.</li>
+<li><strong>Why?</strong> Our ability to act like &quot;native C&quot; is a differentiating capability for Rust. We've seen a lot of traction integrating into big companies on this basis, as a C++ replacement. It's clear that doing this requires the ability to do piecewise adoption.</li>
+<li><strong>Who:</strong> <a href="https://github.com/joshtriplett">joshtriplett</a></li>
+</ul>
+</li>
+<li>Const generics and constant evaluation
+<ul>
+<li><strong>What?</strong> Supporting </li>
+<li><strong>Why?</strong> Heavily requested feature and important for key areas.</li>
+<li><strong>Who:</strong> <a href="https://github.com/nikomatsakis">nikomatsakis</a>, <a href="https://github.com/withoutboats">withoutboats</a></li>
+</ul>
+</li>
+<li>Trait and type system extensions
+<ul>
+<li><strong>What?</strong> Specifically impl Trait, GATs, and specialization</li>
+<li><strong>Why?</strong> Long-standing areas that affect a lot of domains, including async</li>
+<li><strong>Who:</strong> <a href="https://github.com/nikomatsakis">nikomatsakis</a></li>
+</ul>
+</li>
+<li>Error handling
+<ul>
+<li><strong>What?</strong> Combination of <a href="https://blog.yoshuawuyts.com/error-handling-survey/#conclusion">library related improvements</a> that consolidate &quot;best practices&quot; into standard library, documentation to describe how it works, as well as possible language improvements to leverage those changes (try blocks, <code>yeet</code>/<code>throw</code> keyword, etc).</li>
+<li><strong>Why?</strong> Cross-cutting productivity concern, and a persistent problem that makes working with Rust code more difficult than it should be.</li>
+<li><strong>Why?</strong> Anecdotally, something that comes up for a lot of people (see e.g. <a href="https://www.ncameron.org/blog/rust-in-2020-one-more-thing/">nrc's #rust2020 blog post</a>)</li>
+<li><strong>Who:</strong> <a href="https://github.com/withoutboats">withoutboats</a>, <a href="https://github.com/joshtriplett">joshtriplett</a></li>
+</ul>
+</li>
+<li>Borrow checker expressiveness and other lifetime issues
+<ul>
+<li><strong>What?</strong> Think Polonius, RFC 2229, RFC 66, and other ideas like knowing which fields of <code>self</code> are used by particular methods.</li>
+<li><strong>Why?</strong> Learning curve remains a stubborn problem, and the best way to improve it is to make the compiler smarter.</li>
+<li><strong>Who:</strong> <a href="https://github.com/nikomatsakis">nikomatsakis</a>, <a href="https://github.com/pnkfelix">pnkfelix</a></li>
+</ul>
+</li>
+<li>Unsafe code capabilities and reference material
+<ul>
+<li><strong>What?</strong> Document the rules for legal unsafe code and add features that either add required capabilities or make correct code easier and more ergonomic to write.</li>
+<li><strong>Why?</strong> Growing base of unsafe code, changes here are getting harder, this represents a kind of &quot;reputation risk&quot;. We really want to be &quot;better than C&quot; here.</li>
+<li><strong>Who:</strong> <a href="https://github.com/nikomatsakis">nikomatsakis</a>, <a href="https://github.com/pnkfelix">pnkfelix</a></li>
+</ul>
+</li>
+<li>Targeted ergonomic wins and extensions
+<ul>
+<li><strong>What?</strong> Small additions or improvements to make Rust easier to use.</li>
+<li><strong>Why?</strong> These will never rise to the &quot;top of the list&quot;, but they often have outsized impact on people's enjoyment of Rust.</li>
+<li><strong>Who:</strong> <a href="https://github.com/scottmcm">scottmcm</a></li>
+</ul>
+</li>
+<li>Soundness holes to try and correct
+<ul>
+<li><strong>What?</strong> </li>
+<li><strong>Why?</strong> Rust's appeal rests on safety. We have to make steady progress on these points. It's often hard to prioritize them compared to &quot;whiz-bang&quot; features. Also, long-running safety issues can cause fallout when fixed, weakening our stability guarantees.</li>
+<li><strong>Who:</strong> <a href="https://github.com/nikomatsakis">nikomatsakis</a></li>
+</ul>
+</li>
+</ul>
+<h1 id="active-project-groups"><a class="header" href="#active-project-groups">Active project groups</a></h1>
+<p>Would you like to find out what the lang team is working on? Check out
+our <a href="https://github.com/rust-lang/lang-team/projects/2">github project board</a>. It shows the active projects at each stage
+of development, along with an explanation of the various stages. Each
+project has a representative issue that links to more complete
+information. The stages of a project are as follows: </p>
+<table><thead><tr><th>Stage</th><th>Description</th></tr></thead><tbody>
+<tr><td>Proposal</td><td>Deciding whether to start this project</td></tr>
+<tr><td>Exploration</td><td>Exploring the problem space and deciding what RFC(s) to write</td></tr>
+<tr><td>RFC</td><td>There is a pending RFC describing the design</td></tr>
+<tr><td>Implementing</td><td>There is an accepted RFC, but implementation work is ongoing</td></tr>
+<tr><td>Evaluation</td><td>The RFC is fully implemented and we are requesting public feedback</td></tr>
+<tr><td>Stabilized</td><td>The feature is complete and available on stable compilers</td></tr>
+</tbody></table>
+<p>If you'd like to read more about the stages of a project, or you would
+like to propose a new project, see the <a href="./proposing_a_project.html">&quot;proposing a new
+project&quot;</a> page.</p>
+<h1 id="proposing-a-new-project"><a class="header" href="#proposing-a-new-project">Proposing a new project</a></h1>
+<p>Interested in extending the Rust language in some way? The language
+design team is experimenting with a new staged process.</p>
+<h2 id="first-step-file-a-project-proposal"><a class="header" href="#first-step-file-a-project-proposal">First step: file a Project Proposal</a></h2>
+<p>The very first step is [file a <strong>project proposal</strong> issue]. A project
+proposal is a lightweight issue that describes your motivations, any
+ideas you've had thus far on the design, and other background
+information.</p>
+<p><strong>The primary role of the proposal is to request feedback on an idea
+from the lang team.</strong> Before creating a proposal, it's a good idea to
+create a thread on internals and float the idea to get immediate
+feedback on whether the problem is real, prior ideas, or related
+problems. However, you don't have to have a complete solution in mind
+-- and it's fine to have 2 or 3 ideas for how one might solve
+something.</p>
+<p>Once you file the issue, a Zulip stream will be created and you may
+start to get feedback right away. The proposal will also be discussed
+in the <a href="./meetings.html#triage-meeting">triage meeting</a>, and we'll try to post general feedback from
+that meeting.</p>
+<p>The next step depends on the scope of the proposal and on whether a
+[lang-team liaison] is available who has bandwidth.</p>
+<h3 id="smaller-proposals-that-can-be-implemented-directly"><a class="header" href="#smaller-proposals-that-can-be-implemented-directly">Smaller proposals that can be implemented directly</a></h3>
+<p>If a proposal is considered &quot;small&quot;, then the lang-team will approve
+the proposal to go straight to PR. In this case, the next step is
+simply to create an implementation on the appropriate rust-lang
+repository. The PR can cite the proposal page in its description.</p>
+<p>Proposals approved to go straight to PR are tagged as
+<code>implementation-needed</code>.</p>
+<h3 id="larger-proposals-that-require-an-rfc"><a class="header" href="#larger-proposals-that-require-an-rfc">Larger proposals that require an RFC</a></h3>
+<p>Most proposals however require some sort of RFC to be implemented. In
+this case, we will create a <strong>project group</strong> to pursue the project.
+A project group is just a group of people who are authoring the RFC
+and pushing it through to stabilization (and ideally through
+implementation as well, although sometimes that involves very
+difficult people).</p>
+<p>If we decide that a proposal requires an RFC, then once it is assigned
+a liaison, it will be tagged with <code>charter-needed</code>.</p>
+<ul>
+<li><strong>Propose a charter:</strong> The liaison will work with the author of the
+proposal (and any other interested parties) to create a project
+charter, based on the <a href="https://github.com/rust-lang/lang-team/tree/master/minutes">charter template</a>. This is often just a copy
+of the MCP, updated with whatever new material came up during
+discussion. The charter should be added to the lang-team repository
+in a PR, and that PR can &quot;close&quot; the proposal issue.
+<ul>
+<li>This charter PR is approved by the lang-team with a <code>@rustbot fcp merge</code> command.</li>
+</ul>
+</li>
+<li><strong>Exploration phase:</strong> Once the project is created, it enters the &quot;exploration
+phase&quot;. We will create a Zulip stream, project issue, and potentially a repository
+as desired. The goal of this phase is to explore the design space and to come up
+with one or more RFCs that will actually solve the problem. The project
+should keep the lang team up to date on the designs being considered during
+this phase.
+<ul>
+<li>It is also permitted to land feature-gated code in the rust
+compiler during this phase, although any such change should be
+considered highly unstable (and should ideally be minimally
+disruptive).</li>
+<li>Project groups are also encouraged to write regular blog posts in the 
+Inside Rust blog documenting their progress.</li>
+</ul>
+</li>
+<li><strong>RFC phase:</strong> The output of the exploration phase is one or more
+RFCs that describes the proposed design; these RFCs are typically
+written by the project group collaboratively. It's a good idea to
+create RFCs early because this they often receive much wider
+community feedback and may uncover problems in the design.</li>
+<li><strong>Implementation phase:</strong> Once the RFC is landed, implementation typically
+begins, although it sometimes happens that implementation occurs concurrently
+with authoring the RFC.</li>
+<li><strong>Evaluation phase:</strong> Once implementation of the RFC is complete, the project
+group should write a blog post requesting evaluation. They should keep the
+lang-team abreast of any feedback that is received.</li>
+<li><strong>Stabilization phase:</strong> Finally, the feature can be stabilized and released
+on stable Rust. This is done by authorizing a stabilization report, as
+<a href="https://rustc-dev-guide.rust-lang.org/stabilization_guide.html">described here</a>.</li>
+</ul>
+<h3 id="shortlisted-proposals"><a class="header" href="#shortlisted-proposals">Shortlisted proposals</a></h3>
+<p>In some cases, there is a liaison who really likes the idea of a
+proposal, but does not presently have the bandwidth to pursue the
+idea. In that case, it can be assigned to the liaison but tagged as
+<code>shortlisted</code>. The liaison should comment on when they expect to have
+bandwidth to help out; if other liaisons are available, they may want
+to pick up the project instead.</p>
+<h2 id="frequently-asked-questions"><a class="header" href="#frequently-asked-questions">Frequently asked questions</a></h2>
+<h3 id="what-is-the-role-of-a-lang-team-liaison"><a class="header" href="#what-is-the-role-of-a-lang-team-liaison">What is the role of a lang-team liaison?</a></h3>
+<p>The lang-team liaison has the job of monitoring the progress on the
+project and posting updates for the rest of the team. These updates
+can be delivered in person at the <a href="./meetings.html#triage-meeting">triage meeting</a> or as comments on
+the corresponding tracking issue for the project.</p>
+<p>Liaisons should particularly focus on questions where the lang team
+can help -- for example, if the project has narrowed down the set of
+options to a few viable candidates, it would be good to seek lang team
+feedback on which option seems the most promising (often this would be
+a good point to request a <a href="./meetings.html#design-meeting">design meeting</a>).</p>
+<p>Sometimes liaisons will also get actively involved in the design itself,
+or help to mediate the exploration of the design space and ensure
+that the project is pursuing all the possible designs.</p>
+<h3 id="how-do-i-become-a-liaision"><a class="header" href="#how-do-i-become-a-liaision">How do I become a liaision?</a></h3>
+<p>Liaisons play an important role and hence must either members of the
+lang-team or people that the lang team selects for the role. If you'd
+be interested in serving as a liaison, feel free to ping the [lang
+team leads] to express your interest!</p>
+<p>If you're interested in eventually becoming a member of the lang team,
+serving as a liaison is a necessary first step (but many people serve
+as liaisons without the intention to join the lang team).</p>
+<h3 id="what-are-the-things-the-lang-team-is-looking-for-in-a-proposal"><a class="header" href="#what-are-the-things-the-lang-team-is-looking-for-in-a-proposal">What are the things the lang-team is looking for in a proposal?</a></h3>
+<p>When evaluating project proposals, the lang-team is looking to figure
+out the following:</p>
+<ul>
+<li><strong>Does this proposal solve a problem?</strong> Does that problem fit within our
+stated priorities?</li>
+<li><strong>Who are the people involved in this proposal?</strong> In particular, are
+there stakeholders who have explored this design but are not
+mentioned in the proposal?</li>
+<li><strong>What is the scope of work involved and is it proportional to the
+problem being solved?</strong> Sometimes there are problems that are really
+complex to solve and ultimately not that important.</li>
+<li><strong>How &quot;contained&quot; is this project?</strong> Sometimes, even narrow-sounding
+features can wind up affecting lots of things in the language and
+requiring lots of team bandwidth.</li>
+<li><strong>How controversial is this project and is it proportional to the
+problem being solved?</strong> Let's be honest. Lang team discussions can
+sometimes get quite heated. Sometimes we might decide that even if
+we think an idea is good, it's not worth the controversy that will
+result from pursuing it.</li>
+<li><strong>Do we have the right people involved?</strong> Some ideas require
+specific stakeholders to be a success. This might be because of
+specific knowledge (e.g., deep understanding of the type system), or
+because we want representatives for specific use cases, or because
+we want representatives from a wider variety of
+companies/backgrounds. If there have been big projects in this area,
+we might want representatives from all those projects.</li>
+<li><strong>What other things are going on?</strong> We are trying hard not to take
+on more work than we can handle. It's very tempting in open source
+to start a ton of different activities because there are often lots
+of people around with good ideas, but having too many things going
+on is very stressful for everyone.</li>
+</ul>
+<p>This section contains &quot;notes&quot; about the design of various proposals.
+These are often just links to conversations, along with a few key
+ideas and summaries. Sometimes it includes other information, such as
+lang-team decisions about whether a particular proposal is viable.</p>
+<h1 id="can-we-allow-integer-literals-like-1-to-be-inferred-to-floating-point-type"><a class="header" href="#can-we-allow-integer-literals-like-1-to-be-inferred-to-floating-point-type">Can we allow integer literals like <code>1</code> to be inferred to floating point type?</a></h1>
+<h2 id="background"><a class="header" href="#background">Background</a></h2>
+<p>In rust today, an integer like <code>1</code> cannot be inferred to floating
+point type. This means that valid-looking numeric expressions like
+<code>22.5 + 1</code> will not compile, and one must instead write <code>22.5 + 1.0</code>. Can/should we change this?</p>
+<h2 id="history"><a class="header" href="#history">History</a></h2>
+<p>This was discussed on Zulip in <a href="https://zulip-archive.rust-lang.org/213817tlang/43153EditionRequestlet1beafloatliteral.html">May 2020</a>. Some of the key highlights from the discussion were:</p>
+<ul>
+<li>Floating point literals are prone to many surprises that integers
+are not. For <a href="https://zulip-archive.rust-lang.org/213817tlang/43153EditionRequestlet1beafloatliteral.html#196887384">example</a>, <code>20_000_000 + 1</code>, if inferred to <code>f32</code>
+type, would have the final value <code>20_000_000.0</code>. This leads some to
+conclude that <a href="https://zulip-archive.rust-lang.org/213817tlang/43153EditionRequestlet1beafloatliteral.html#196887384">&quot;the surprise factor of floats is so high that they
+are qualitatively different than integers&quot;</a>.</li>
+<li>But there are a lot of similar surprising things:
+<ul>
+<li><a href="https://zulip-archive.rust-lang.org/213817tlang/43153EditionRequestlet1beafloatliteral.html#196930252"><code>20_000_001_f32</code>, for example, is also going to be <code>20_000_000</code>.</a></li>
+<li>Integer overflow can mean that <code>255 + 1</code> has the value 0.</li>
+</ul>
+</li>
+<li>Some key questions to consider:
+<ul>
+<li><a href="https://zulip-archive.rust-lang.org/213817tlang/43153EditionRequestlet1beafloatliteral.html#196926142">How often does adding <code>.0</code> result in some insight?</a></li>
+<li>How much would <em>seeing</em> the <code>.0</code> help to debug a tricky problem?</li>
+</ul>
+</li>
+<li>Balanced against the annoyance and surprise factor.</li>
+</ul>
+<h1 id="generalized-coroutines"><a class="header" href="#generalized-coroutines">Generalized coroutines</a></h1>
+<p>Since even before Rust 1.0, users have desired the ability to <code>yield</code> like in
+other languages. The compiler infrastructure to achieve this, along with an
+unstable syntax, have existed for a while now. But despite <em>a lot</em> of debate,
+we've failed to polish the feature up enough to stabilize it. I've tried to
+write up a summary of the different design considerations and the past debate
+around them below:</p>
+<h2 id="terminology"><a class="header" href="#terminology">Terminology</a></h2>
+<ul>
+<li>The distinction between a &quot;coroutine&quot; and a &quot;generator&quot; can be a bit vague,
+varying from one discussion to the next.</li>
+<li>In these notes a generator is anything which <em>directly</em> implements <code>Iterator</code>
+or <code>Stream</code> while a coroutine is anything which can take arbitrary input,
+yield arbitrary output, and later resume execution at the previous yield.</li>
+<li>Thus, the &quot;generator&quot; syntax proposed in <a href="https://github.com/rust-lang/rfcs/pull/2033">eRFC-2033</a> and currently
+implemented behind the &quot;generator&quot; feature is actually a coroutine syntax for
+the sake of these notes, <em>not a true generator</em>.
+<ul>
+<li><a href="https://github.com/rust-lang/rfcs/pull/2996/">RFC-2996</a> defines a true generator syntax in &quot;future additions&quot;.</li>
+</ul>
+</li>
+<li>Note also that &quot;coroutines&quot; here are really &quot;semicoroutines&quot; since they can
+only yield back to their caller.</li>
+<li>I will continue to group the <a href="https://github.com/rust-lang/rfcs/pull/2033">original eRFC text</a> and the later <a href="https://github.com/rust-lang/rust/pull/68524">generator
+resume arguments</a> extension
+togther as &quot;<a href="https://github.com/rust-lang/rfcs/pull/2033">eRFC-2033</a>&quot;. That way I only have 3 big proposals to deal
+with.</li>
+<li>In rustc, a coroutine's &quot;witness&quot; is the space where stack-allocated values
+are stored if needed across yields. I'm borrowing this terminology here. Any
+such cross-yield bindings are said to be &quot;witnessed&quot;.</li>
+</ul>
+<pre><code class="language-rust ignore">// This is an example coroutine which might assist a streaming base64 encoder
+|sextet, octets| {
+    let a = sextet; // witness a, b, and c sextets for later use
+    yield;
+    let b = sextet;
+    octets.push(a &lt;&lt; 2 | b &gt;&gt; 4); // aaaaaabb
+    yield;
+    let c = sextet;
+    octets.push((b &amp; 0b1111) &lt;&lt; 4 | c &gt;&gt; 2); // bbbbcccc
+    yield;
+    octets.push((c &amp; 0b11) &lt;&lt; 6 | sextet) // ccdddddd
+}
+
+// This is an example generator which might be used in Iterator::flat_map.
+gen {
+  for item in inner {
+    for mapped in func(item) {
+      yield mapped;
+    }
+  }
+}
+
+// This is an example async generator which might be used in Stream::and_then
+async gen {
+  while let Some(item) = inner.next().await {
+    yield func(item).await;
+  }
+}
+</code></pre>
+<h2 id="coroutine-trait"><a class="header" href="#coroutine-trait">Coroutine trait</a></h2>
+<ul>
+<li>The coroutine syntax must produce implementations of some trait.</li>
+<li><a href="https://github.com/rust-lang/rfcs/pull/2781">RFC-2781</a> and <a href="https://github.com/rust-lang/rfcs/pull/2033">eRFC-2033</a> propose the <code>Generator</code> trait.</li>
+<li>Note that Rust's coroutines and subroutines look the same from the outside:
+take input, mutate state, produce output.</li>
+<li>Thus, <a href="https://github.com/rust-lang/lang-team/issues/49">MCP-49</a> proposes using the <code>Fn*</code> traits instead, including a new
+<code>FnPin</code> for immovable coroutines.
+<ul>
+<li>Hierarchy: <code>Fn</code> is <code>FnMut + Unpin</code> is <code>FnPin</code> is <code>FnOnce</code>.
+<ul>
+<li>May not be <em>required</em> at the trait level (someone may someday find a use
+to implementing <code>FnMut + !FnPin</code>) but all closures implement the traits in
+this order.</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="coroutine-syntax"><a class="header" href="#coroutine-syntax">Coroutine syntax</a></h2>
+<ul>
+<li>The closure syntax is reused for coroutines by <a href="https://github.com/rust-lang/rfcs/pull/2033">eRFC-2033</a>, <a href="https://github.com/rust-lang/rfcs/pull/2781">RFC-2781</a>,
+and <a href="https://github.com/rust-lang/lang-team/issues/49">MCP-49</a>.</li>
+<li>Commentators have suggested that the differences between coroutines and
+closures under <a href="https://github.com/rust-lang/rfcs/pull/2033">eRFC-2033</a> and <a href="https://github.com/rust-lang/rfcs/pull/2781">RFC-2781</a> justify an entirely distinct
+syntax to reduce confusion.</li>
+<li><a href="https://github.com/rust-lang/lang-team/issues/49">MCP-49</a> fully reuses the <em>semantics</em> of closures, greatly simplifying the
+design space and making the shared syntax obvious.</li>
+</ul>
+<h2 id="taking-input"><a class="header" href="#taking-input">Taking input</a></h2>
+<ul>
+<li>The major disagreement between past proposals is whether to use &quot;yield
+expressions&quot; or &quot;magic mutation&quot;.
+<ul>
+<li>Yield expression: <code>let after = yield output;</code>
+<ul>
+<li>Used by <a href="https://github.com/rust-lang/rfcs/pull/2033">eRFC-2033</a></li>
+</ul>
+</li>
+<li>Magic mutation: <code>let before = arg; yield output; let after = arg;</code>
+<ul>
+<li>Used by <a href="https://github.com/rust-lang/rfcs/pull/2781">RFC-2781</a> and <a href="https://github.com/rust-lang/lang-team/issues/49">MCP-49</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Many people have a strong gut preference for yield expressions.
+<ul>
+<li>In simple cases, Rust generally prefers to produce values as output from
+expressions rather than by mutation of state. &quot;Yield expressions <em>feel</em> more
+Rusty.&quot;</li>
+<li>However, magic mutation is likely correct, even though at first glance it
+feels surprising. In addition to reasons below, holding references to past
+resume args is rare, often a logic error. Rust can use mutation checks to
+catch and give feedback.</li>
+</ul>
+</li>
+<li>&quot;Magic mutation&quot; is a bit of a misnomer. The resume argument values are <em>not
+themselves being mutated.</em> The argument bindings are simply being reassigned
+across yields.
+<ul>
+<li>In a sense, argument bindings are reassigned in the exact same way across
+returns.</li>
+<li>Previous arguments (if unmoved) are dropped prior to yielding and are
+reassigned after resuming.</li>
+<li>People will get yelled at by the borrow checker if they try to hold borrows
+of arguments across yields. But the fix is generally easy: move the argument
+to a new binding before yielding.</li>
+</ul>
+</li>
+</ul>
+<pre><code class="language-text">=&gt; |x| {
+    let y = &amp;x;
+    yield;
+    dbg!(y, x);
+}
+
+error[E0506]: cannot pass new `x` because it is borrowed
+ --&gt; src/lib.rs:3:4
+  |
+2 |     let y = &amp;x;
+  |             -- borrow of `x` occurs here
+3 |     yield;
+  |     ^^^^^ assignment to borrowed `x` occurs here
+4 |     dbg!(y, x);
+  |             - borrow later used here
+  |
+  = help: consider moving `x` into a new binding before borrowing
+
+=&gt; |x| {
+    let a = x;
+    let y = &amp;a;
+    yield;
+    dbg!(y, x);
+}
+</code></pre>
+<ul>
+<li>Magic mutation could be replaced by &quot;magic shadowing&quot; where new arguments
+shadow old ones at yield in order to allow easy borrowing of past argument
+values. But this is a huge footgun. See if you can spot the issue with the
+following code if <code>ctx</code> shadows its past value rather than overwriting it:</li>
+</ul>
+<pre><code class="language-rust ignore">std::future::from_fn(|ctx| {
+  if is_blocked() {
+    register_waker(ctx);
+    yield Pending;
+  }
+
+  while let Pending = task.poll(ctx) { .. }
+})
+</code></pre>
+<ul>
+<li>&quot;Yield expression&quot; causes problems with first-resume input.
+<ul>
+<li><a href="https://github.com/rust-lang/rfcs/pull/2033">eRFC-2033</a> passes the first resume argument via a closure parameters
+while later arguments are produced by <code>yield</code> expressions.</li>
+<li>This part of why it is so hard to unify generalized coroutines with a
+generator syntax like <code>gen { }</code> or <code>gen fn</code>. Where does the first input go?
+Where do you annotate the argument type even?</li>
+</ul>
+</li>
+<li>To increase clarity, users almost always want resume arguments to be named.
+<ul>
+<li>With magic mutation, all resume arguments are already named since they reuse
+the closures arguments on every resume. Any unmoved arguments are dropped
+just prior to yielding, so they are not witnessed and do not increase the
+coroutine size.
+<ul>
+<li>Also get multiple arguments for free if using the <code>Fn*</code> traits.</li>
+</ul>
+</li>
+<li>Yield expressions require users to repeatedly assign resume arguments to
+named bindings manually. Such bindings must be included in the closure state
+if they have any drop logic.</li>
+</ul>
+</li>
+</ul>
+<h2 id="borrowed-resume-arguments"><a class="header" href="#borrowed-resume-arguments">Borrowed resume arguments</a></h2>
+<ul>
+<li>What happens when a coroutine witnesses a borrow passed as a resume argument?
+For example:</li>
+</ul>
+<pre><code class="language-rust ignore">let co = |x: &amp;i32| {
+  let mut values = Vec::new();
+  loop {
+    values.push(x);
+    yield;
+  }
+};
+
+// potentially ok:
+let mut x = 0;
+co(&amp;x);
+
+// must not be allowed:
+x = 1;
+co(&amp;x);
+</code></pre>
+<ul>
+<li>As of writing, <a href="https://github.com/rust-lang/rfcs/pull/2781">RFC-2781</a> leaves this as an unresolved question with a note
+to potentially restrict resume arguments to being <code>'static</code>.</li>
+<li>Since coroutines under <a href="https://github.com/rust-lang/rfcs/pull/2781">MCP-49</a> act as much like closures as possible, and
+treat the witness and capture data the same whenever possible, the example
+above would fail in a similar way to the example below, giving a &quot;borrowed
+data escapes into closure state&quot; error or similar even if <code>x</code> is not mutated.</li>
+</ul>
+<pre><code class="language-rust ignore">let mut values = Vec::new();
+|x: &amp;i32| {
+  loop {
+    values.push(x);
+//  ^^^^^^^^^^^^^^ `x` escapes the closure body here
+    yield;
+  }
+}
+</code></pre>
+<ul>
+<li>As of writing, <a href="https://github.com/rust-lang/rfcs/pull/2033">eRFC-2033</a> appears to take a similar approach (although the
+error message is not super descriptive).</li>
+<li>Ideally someday we'd do something nicer but any such solution would apply to both captured state and witnessed state in the same way.</li>
+</ul>
+<h2 id="lending"><a class="header" href="#lending">Lending</a></h2>
+<ul>
+<li>Coroutines would eventually like to yield borrows of state to the caller. This
+is &quot;lending&quot; coroutine (sometimes also called an &quot;attached&quot; coroutine).</li>
+<li>Using <a href="https://github.com/rust-lang/lang-team/issues/49">MCP-49</a>, a lending coroutine might look like:</li>
+</ul>
+<pre><code class="language-rust ignore">|| {
+  let mut buffer = Vec::new();
+  loop {
+    let n = fill_buffer(&amp;mut buffer);
+    yield &amp;buffer[..n];
+  }
+}
+</code></pre>
+<ul>
+<li>None of the major proposals have made an effort to resolve this directly as
+far as I am aware.
+<ul>
+<li><a href="https://github.com/rust-lang/rfcs/pull/2996/">RFC-2996</a> gets the closest with a mention of <code>LendingStream</code> and
+<code>LendingIterator</code> traits in &quot;future additions&quot;.</li>
+<li>We should probably get some experience with lending traits at the lib level
+before attempting to add language level support.</li>
+</ul>
+</li>
+<li>If lending closures were implemented, <a href="https://github.com/rust-lang/lang-team/issues/49">MCP-49</a> could immediately be used to
+build lending streams, iterators, etc so long as the respective traits have
+the needed GAT-ification.</li>
+</ul>
+<h2 id="enum-wrapping"><a class="header" href="#enum-wrapping">Enum-wrapping</a></h2>
+<ul>
+<li><a href="https://github.com/rust-lang/rfcs/pull/2781">RFC-2781</a> and <a href="https://github.com/rust-lang/rfcs/pull/2033">eRFC-2033</a> propose that <code>yield x</code> should produce
+<code>GeneratorState::Yielded(x)</code> or equivalent as an output, in order to
+discriminate between yielded and returned values.</li>
+<li><a href="https://github.com/rust-lang/lang-team/issues/49">MCP-49</a> instead gives <code>yield x</code> and <code>return x</code> nearly identical semantics
+and output <code>x</code> directly, so the two must return the same type.</li>
+<li>Enum-wrapping here is analogous to Ok-wrapping elsewhere. Similar debates
+result.</li>
+<li>When using enum-wrapping, the syntax to specify distinct return/yield types is
+hotly debated.</li>
+<li>Generators always want return and yield to have different types (<code>()</code> vs <code>T</code>)
+but a generator syntax on top of coroutines could be used to auto-insert enum
+wrappers around yield vs return arguments.</li>
+<li>Auto-enum-wrapping can slightly improve type safety in some cases where
+<code>return</code> should be treated specially to avoid bugs.</li>
+<li>No-enum-wrapping when combined with the <code>impl Fn*</code> choice of trait, allow
+the coroutine syntax to be used directly with existing higher-order methods
+on iterator, stream, collection types, async traits, etc.</li>
+<li>Note these two approaches are &quot;isomorphic&quot;: a coroutine that returns
+<code>GeneratorState&lt;T, T&gt;</code> could be wrapped to return <code>T</code> by some sort of
+combinator and a coroutine that only returns <code>T</code> can have <code>yield</code> and <code>return</code>
+values manually wrapped in <code>GeneratorState</code>. This is just about ergonomics:</li>
+</ul>
+<pre><code class="language-rust ignore">// Without enum wrapping:
+std::iter::from_fn(|| {
+  yield Some(1);
+  yield Some(2);
+  yield Some(3);
+  None
+}).map(|x| {
+  yield -x;
+  yield x;
+});
+
+// With enum wrapping:
+std::iter::from_gen_fn(|| {
+  yield 1;
+  yield 2;
+  yield 3;
+}).map(unwrap_gen_state(|x| {
+  yield -x;
+  yield x;
+}));
+
+// Needed for un-enum-wrapping when not desired.
+// Could be replaced by sufficiently fancy !-casting?
+fn unwrap_gen_state&lt;T&gt;(f: impl FnMut() -&gt; GeneratorState&lt;T, !&gt;) -&gt; T { ... }
+fn merge_gen_state&lt;T&gt;(f: impl FnMut() -&gt; GeneratorState&lt;T, T&gt;) -&gt; T { ... }
+
+// With no wrapping + generators:
+(gen {
+  yield 1;
+  yield 2;
+  yield 3;
+}).map(|x| {
+  yield -x;
+  yield x;
+})
+</code></pre>
+<h2 id="movability"><a class="header" href="#movability">Movability</a></h2>
+<ul>
+<li>All proposals want movability/<code>impl Unpin</code> to be inferred.
+<ul>
+<li>If we forbid &quot;borrowed data escaping into closure state&quot;, the inference
+rules should be relatively simple: witnessing any borrow triggers
+immovability.
+<ul>
+<li>Dead borrows should not be witnessed.</li>
+</ul>
+</li>
+<li>But exact inference rules may only be well understood after an attempt at
+implementation.</li>
+</ul>
+</li>
+<li>Soundness of <code>pin_mut!</code> is a little tricky but seems to be fine no matter what.
+<ul>
+<li>If the resulting mutable borrow is witnessed ⇒ coroutine is <code>!Unpin</code> because
+of inference rules</li>
+<li>If the pinned data is <code>!Unpin</code> and is witnessed ⇒ coroutine is <code>!Unpin</code>
+because witness contains <code>!Unpin</code> data</li>
+<li>Thus, if the coroutine can be moved after resume, any data stack-pinned
+(really witness-pinned) by <code>pin_mut!</code> is not referenced and is <code>Unpin</code>.</li>
+</ul>
+</li>
+<li>Until inference is solved, the <code>static</code> keyword can be used as a modifier.</li>
+</ul>
+<pre><code class="language-rust ignore">// movable via inference
+|| {
+  let x = 4;
+  let y = &amp;x;
+  dbg!(y);
+  yield;
+}
+
+// guaranteed movable (pending inference)
+static || {
+  ...
+}
+
+// immovable
+|| {
+  let x = 4;
+  let y = &amp;x;
+  yield;
+  dbg!(y);
+}
+</code></pre>
+<h2 id="once-coroutines"><a class="header" href="#once-coroutines">&quot;Once&quot; coroutines</a></h2>
+<ul>
+<li>A lot of coroutines destroy captured data when run.</li>
+<li>These coroutines (notably futures) can be resumed many times but can only be
+run through &quot;once&quot;.</li>
+<li>In contrast to non-yield <code>FnOnce</code> closures, this can not be solved at the type
+level because a coroutine can run out after an arbitrary, runtime-dependent
+number of resumptions.
+<ul>
+<li>Attempts to discriminate with enums tend to run up against <code>Pin</code>.</li>
+</ul>
+</li>
+<li>Coroutines must have the ability to block restart with a <code>panic!</code>.
+<ul>
+<li>Following <code>return</code>.</li>
+<li>Following <code>panic!</code> and recovery.</li>
+<li>The term &quot;poison state&quot; technically refers to only the later case. But here
+I will use it to mean any state at which the closure panics if resumed.</li>
+</ul>
+</li>
+<li><a href="https://github.com/rust-lang/rfcs/pull/2781">RFC-2781</a> and <a href="https://github.com/rust-lang/rfcs/pull/2033">eRFC-2033</a> propose that all coroutines become poisoned
+after returning.</li>
+<li><a href="https://github.com/rust-lang/lang-team/issues/49">MCP-49</a> recommends that all non-capture-destroying coroutines resume at
+their initial state after returning.
+<ul>
+<li>This can be very handy in some situations. In fact, I use it several times
+in examples to increase readability. See anywhere I <code>iter.map(coroutine)</code> or
+the base64 encoder.</li>
+<li>Similar question around generators: should they loop to save on a state or
+should they be fused-by-default?</li>
+<li>If we do decide to panic-after-return, restart-after-return can still be
+emulated using <code>loop { .. }</code> as the coroutine body instead of simply <code>{ .. }</code>. This is even zero-cost because unreachable poison states are eliminated.</li>
+</ul>
+</li>
+<li><a href="https://github.com/rust-lang/lang-team/issues/49">MCP-49</a> also optionally proposes that capture-destroying closures should
+only implement <code>FnOnce</code> unless explicitly annotated, even if they should
+apparently be resumable several times.
+<ul>
+<li><code>mut || { drop(capture); }</code> is recommended as the modifier, to hint that an
+<code>FnMut</code> impl is being requested when the closure in question would otherwise
+impl only <code>FnOnce</code>.</li>
+<li>But the behavior of this modifier is probably too obscure and requires
+too much explanation vs &quot;closures always impl FnMut/FnPin if they contain
+yield&quot;.</li>
+</ul>
+</li>
+</ul>
+<h2 id="async-coroutines"><a class="header" href="#async-coroutines">Async coroutines</a></h2>
+<ul>
+<li>I am aware of no strong proposal for an async version of generalized
+coroutines although a fair amount of discussion has taken place.
+<ul>
+<li>In the context of <a href="https://github.com/rust-lang/lang-team/issues/49">MCP-49</a>, how should <code>async || { ... yield ...}</code> be
+handled in the very long-term? <em>Error right now.</em></li>
+</ul>
+</li>
+<li>Async coroutines don't make much sense because of resume arguments. Async
+functions are already coroutines which take an <code>&amp;mut Context</code> as a resume
+argument. How should additional arguments should be specified?
+<ul>
+<li>Do the additional args need to be passed every single poll or are they only
+needed when resuming after <code>Ready</code>?</li>
+<li>If they are stored between <code>Ready</code>s, how does that interact with the ban on
+witnessing external borrows? Badly.</li>
+<li>On resume, the the coroutine might only take the additional arguments. It
+could then yield a future to take the async context and handle any <code>Pending</code>
+yields.</li>
+<li>If so, how is the coroutine body broken up into distinct futures to be
+yielded?</li>
+<li>What happens if a yielded future is destroyed early? Panic on resume?</li>
+</ul>
+</li>
+<li>Generators and async are both sugars on top of coroutines and are orthogonal
+to each other. But neither is orthogonal to the underlying coroutine feature:</li>
+</ul>
+<pre><code class="language-rust ignore">// an async block
+async {
+  &quot;hello&quot;
+}
+
+// an async generator
+async gen {
+  yield &quot;hello&quot;;
+}
+
+// an &quot;async coroutine&quot;
+|ctx: &amp;mut Context| {
+  yield Poll::Ready(&quot;hello&quot;);
+}
+</code></pre>
+<ul>
+<li>Taking the async context explicitly makes it cleaner to implement some complex
+async functions which take additional poll parameters.
+<ul>
+<li>An <code>await_with!</code> macro would be quite useful for implementing <code>await</code> loops
+on arbitrary <code>Poll</code>-returning functions.
+<ul>
+<li>Would be a good candidate for an <code>.await(args..)</code> syntax if very heavily
+used.</li>
+</ul>
+</li>
+<li>For example, an simple little checksumming async write wrapper might look
+like this:</li>
+</ul>
+</li>
+</ul>
+<pre><code class="language-rust ignore">|ctx: &amp;mut Context, bytes: &amp;[u8]| -&gt; Poll&lt;usize&gt; {
+  let mut checksum = 0;
+  let mut count = 0;
+  pin_mut!(writer);
+
+  loop {
+    let n = 4096 - count;
+    if n == 0 {
+      await_with!(writer.poll_write, ctx, &amp;[checksum]);
+    }
+
+    let part = &amp;bytes[..bytes.len().min(n)];
+    checksum = part.fold(checksum, |x, &amp;y| x ^ y);
+    await_with!(writer.poll_write, ctx, part);
+
+    count += part.len();
+    yield Ready(part.len());
+  }
+}
+</code></pre>
+<h2 id="try"><a class="header" href="#try">Try</a></h2>
+<ul>
+<li>All proposals work fine with the <code>?</code> operator without even trying (haha).</li>
+<li><code>Poll&lt;Result&lt;_, _&gt;&gt;</code> and <code>Poll&lt;Option&lt;Result&lt;_, _&gt;&gt;&gt;</code> already implement <code>Try</code>!</li>
+<li>Generators usually want a totally different <code>?</code> desugar that does <code>yield Some(Err(...)); return None;</code> instead of <code>return Err(...)</code>.
+<ul>
+<li>This comes up a lot in discussions of general coroutine syntaxes but just
+muddies things up because (say it with me) generators ≠ coroutines.</li>
+<li>Sugar-free implementation is easy: <code>yield Some(try { ... }); None</code></li>
+</ul>
+</li>
+<li>Try blocks in general are super useful for handing errors by moving into
+specific error-handeling states.</li>
+</ul>
+<h2 id="language-similarity"><a class="header" href="#language-similarity">Language similarity</a></h2>
+<ul>
+<li>Rust's version of coroutines can be a bit unusual compared to other languages.
+But the reason for this is simple: you need arguments to resume Rusty
+coroutines.</li>
+<li>Resume arguments in other languages can be passed just fine by sharing mutable
+data. So all they need to implement are generators, not true coroutines as
+defined here.</li>
+</ul>
+<pre><code class="language-python"># Generator function takes a word list and name on construction.
+# The shared list is mutated to make room for new words.
+def write_greeting(name, words):
+    words.append('hello')
+    if words.is_full:
+        yield
+    words.append(name)
+
+</code></pre>
+<pre><code class="language-rust ignore">// Function only needs name to construct coroutine.
+// Coroutine gets mutable access to the word list each resume.
+fn write_greeting(name: String) -&gt; impl FnMut(&amp;mut Vec&lt;String&gt;) {
+  |words| {
+    words.push(&quot;hello&quot;.to_string());
+    if words.len() == words.capacity() {
+      yield
+    }
+    words.push(name);
+  }
+}
+
+</code></pre>
+<h2 id="language-complexity"><a class="header" href="#language-complexity">Language complexity</a></h2>
+<ul>
+<li>The main selling point of <a href="https://github.com/rust-lang/lang-team/issues/49">MCP-49</a> is that it avoids adding a whole new language feature with associated design questions. Instead, the common answer to questions regarding MCP-49 is that yield-closures simply do whatever closures do.
+<ul>
+<li>The syntax is the same.</li>
+<li>Captures work the same way.</li>
+<li>Arguments are passed the same way.</li>
+<li>Return and yield both drop the latest arguments and then pop the call stack.</li>
+<li>The only big difference is that once <code>yield</code> is involved, some variables get
+stored in a witness struct rather than in the stack frame. Plus the need for
+a poison state.</li>
+</ul>
+</li>
+<li>In fact, <code>return</code> behaves exactly like a simultaneous <code>yield</code> + <code>break 'closure_body</code>.
+<ul>
+<li>In a sense, every closure already has a single yield point at which it
+resumes after <code>return</code>.</li>
+<li>A <code>yield</code> adds a second resume point: hence the need for a discriminant.</li>
+</ul>
+</li>
+<li>Under that proposal, anywhere a closure can be used, a coroutine can too. And
+vice versa.</li>
+</ul>
+<h2 id="generator-unification"><a class="header" href="#generator-unification">Generator unification</a></h2>
+<ul>
+<li>So far in this proposal, I've been very careful to distinguish generators (as
+supported by the propane and async_stream crates, proposed by <a href="https://github.com/rust-lang/rfcs/pull/2996/">RFC-2996</a>,
+etc) from the coroutines discussed here. They are treated as two separate
+language features.</li>
+<li>Does Rust have &quot;room&quot; for both stream syntax and a generator syntax? Would it
+be better to find a single solution to both?</li>
+<li>A single solution is difficult for a few reasons:
+<ul>
+<li>Taking resume arguments muddies the syntax. For example, what would be the
+syntax for a generator function which takes an explicit resume argument?</li>
+<li>The closure syntax works great for coroutines which implement <code>Fn*</code> a la
+<a href="https://github.com/rust-lang/lang-team/issues/49">MCP-49</a>! But reusing that syntax to magically implement <code>Iterator</code> or
+<code>Stream</code> would cause confusion.</li>
+<li>On that note, generators <em>definitely</em> want to implement different traits vs
+coroutines. <code>Iterator</code> and <code>Stream</code> rather than <code>Fn</code> or (ironically)
+<code>Generator</code>.</li>
+<li>As stated above, async coroutines don't make much sense: async interacts
+poorly with resume arguments.</li>
+<li>Async generators are super important, don't care about resume arguments.</li>
+<li>As mentioned in the section on try, generators and coroutines generally want
+different error handling. Or at lest, some more complex <code>?</code> desugar is not
+so obvious for coroutines in general as it is for generators specifically.</li>
+</ul>
+</li>
+<li>Once generalized coroutines are in place, a generator syntax like the one in
+<a href="https://github.com/rust-lang/rfcs/pull/2996/">RFC-2996</a> is a trivial sugar on top:</li>
+</ul>
+<pre><code class="language-rust ignore">gen {
+  for item in inner {
+    for mapped in func(item) {
+      yield mapped;
+    }
+  }
+}
+
+// becomes
+
+std::iter::from_fn(|| {
+  for item in inner {
+    for mapped in func(item) {
+      yield Some(mapped);
+    }
+  }
+  None
+})
+</code></pre>
+<pre><code class="language-rust ignore">async gen {
+  while let Some(item) = inner.next().await {
+    yield func(item).await;
+  }
+}
+
+// becomes
+
+std::stream::from_fn(|ctx| {
+  while let Some(item) = await_with!(inner.next(), ctx) {
+    yield Ready(Some(await_with!(func(item), ctx)));
+  }
+  Ready(None)
+})
+</code></pre>
+<ul>
+<li>Proc-macro crates could provide very satisfactory <code>gen</code> and <code>gen_async</code> macros
+until we are sure of the need to support such a sugar directly in language as
+a keyword or in core as a first-party macro.</li>
+</ul>
+<h2 id="past-discussions"><a class="header" href="#past-discussions">Past discussions</a></h2>
+<p>There are a <em>lot</em> of these. Dozens of internals threads, reddit posts, blog
+posts, draft RFCs, pre RFCs, actual RFCs, who knows what in Zulip, and so on.
+So this isn't remotely exhaustive:</p>
+<ul>
+<li>https://github.com/CAD97/rust-rfcs/pull/1</li>
+<li>https://github.com/rust-lang/lang-team/issues/49</li>
+<li>https://github.com/rust-lang/rfcs/pull/2033</li>
+<li>https://github.com/rust-lang/rfcs/pull/2781</li>
+<li>https://github.com/rust-lang/rust/issues/43122</li>
+<li>https://github.com/rust-lang/rust/pull/68524</li>
+<li>https://internals.rust-lang.org/t/crazy-idea-coroutine-closures/1576</li>
+<li>https://internals.rust-lang.org/t/no-return-for-generators/11138</li>
+<li>https://internals.rust-lang.org/t/syntax-for-generators-with-resume-arguments/11456</li>
+<li>https://internals.rust-lang.org/t/trait-generator-vs-trait-fnpin/10411</li>
+<li>https://reddit.com/r/rust/comments/dvd3az/generalizing_coroutines/</li>
+<li>https://samsartor.com/coroutines-2</li>
+<li>https://smallcultfollowing.com/babysteps/blog/2020/03/10/async-interview-7-withoutboats/#async-fn-are-implemented-using-a-more-general-generator-mechanism</li>
+<li>https://users.rust-lang.org/t/coroutines-and-rust/9058</li>
+</ul>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                        
+
+                        
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                
+
+                
+            </nav>
+
+        </div>
+
+        
+
+        
+
+        
+
+        
+        <script type="text/javascript">
+            window.playground_copyable = true;
+        </script>
+        
+
+        
+
+        
+        <script src="elasticlunr.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="mark.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="searcher.js" type="text/javascript" charset="utf-8"></script>
+        
+
+        <script src="clipboard.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="highlight.js" type="text/javascript" charset="utf-8"></script>
+        <script src="book.js" type="text/javascript" charset="utf-8"></script>
+
+        <!-- Custom JS scripts -->
+        
+
+        
+        
+        <script type="text/javascript">
+        window.addEventListener('load', function() {
+            window.setTimeout(window.print, 100);
+        });
+        </script>
+        
+        
+
+    </body>
+</html>
